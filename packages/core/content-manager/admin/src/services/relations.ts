@@ -126,6 +126,11 @@ const relationsApi = contentManagerApi.injectEndpoints({
           endpointName,
           model: queryArgs.model,
           targetField: queryArgs.targetField,
+          // The source document/component: several instances of the same component (e.g. two
+          // components in a dynamic zone) share model + targetField but have different options.
+          id: queryArgs.id,
+          locale: queryArgs.params?.locale,
+          status: queryArgs.params?.status,
           _q: queryArgs.params?._q,
           idsToOmit: queryArgs.params?.idsToOmit,
           idsToInclude: queryArgs.params?.idsToInclude,

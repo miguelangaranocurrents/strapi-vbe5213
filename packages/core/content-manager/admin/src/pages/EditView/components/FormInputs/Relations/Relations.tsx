@@ -568,6 +568,7 @@ const RelationsInput = ({
     searchForTrigger({
       model,
       targetField,
+      id,
       params: {
         ...currentDocumentMeta.params,
         id: id ?? '',
@@ -750,9 +751,16 @@ const RelationModalWithContext = ({
 
   const options = data?.results ?? [];
 
+  /**
+   * Once a relation is selected (or removed) the search that produced it is stale: the
+   * selected entry is omitted from the options, so keeping the search term would leave the
+   * dropdown showing "No relations available" the next time it opens.
+   */
   React.useLayoutEffect(() => {
     setTextValue('');
-  }, [fieldValue]);
+    // Return the same object when there's nothing to reset, so mounting doesn't trigger a refetch.
+    setSearchParams((s) => (s._q === '' && s.page === 1 ? s : { ...s, _q: '', page: 1 }));
+  }, [fieldValue, setSearchParams]);
 
   const handleSearch = async (search: string) => {
     setSearchParams((s) => ({ ...s, _q: search, page: 1 }));

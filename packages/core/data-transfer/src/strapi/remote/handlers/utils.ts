@@ -352,8 +352,12 @@ export const handlerControllerFactory =
             cannotRespondHandler(err);
           } finally {
             resetTimeouts();
-            strapi.db.lifecycles.enable();
-            strapi.log.info('[Data transfer] Restoring lifecycle hooks');
+            // Like `hasHttpServer`, strapi may not be defined here (e.g. during a server restart),
+            // and referencing an undeclared global throws, so check it before touching it.
+            if (typeof strapi !== 'undefined') {
+              strapi.db?.lifecycles?.enable();
+              strapi.log?.info('[Data transfer] Restoring lifecycle hooks');
+            }
           }
         });
         ws.on('error', async (...args) => {
